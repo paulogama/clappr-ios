@@ -3,8 +3,6 @@ name: Swift
 on:
   push:
     branches: [ test ]
-  pull_request:
-    branches: [ dev ]
 
 jobs:
   build:
@@ -13,7 +11,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+
     - name: Setup environment
       run: make setup
+    
     - name: Run tests
       run: make test
